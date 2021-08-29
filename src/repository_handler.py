@@ -9,7 +9,7 @@ import utilities
 from github2pandas.utility import Utility
 
 
-class RepositoryHandler(ABC):
+class RequestHandler(ABC):
     def __init__(self, github_token, parameters):
         self.repository_list = []
         self.github_token = github_token
@@ -31,8 +31,11 @@ class RepositoryHandler(ABC):
             output = "No repositories found according to request!"
         return output
 
-    def save_repositories_to_csv(self, project_folder,
+    def save_repositories_to_csv(self,
+                                 project_folder=None,
                                  file_name='repositories.csv'):
+        if not project_folder:
+            project_folder = self.request.parameters.project_folder
         output_path = Path(project_folder, file_name)
         file = open(output_path, 'w+', newline='')
 
@@ -41,7 +44,7 @@ class RepositoryHandler(ABC):
                 file.write(repo.full_name + "\n")
 
 
-class RepositoriesByOrganization(RepositoryHandler):
+class RepositoriesByOrganization(RequestHandler):
 
     MANDATORY_PARAMETERS = [
         "organization_names"
@@ -64,7 +67,7 @@ class RepositoriesByOrganization(RepositoryHandler):
         self.repository_list = relevant_repos
 
 
-class RepositoriesByRepoNames(RepositoryHandler):
+class RepositoriesByRepoNames(RequestHandler):
 
     MANDATORY_PARAMETERS = [
         "repos_names"
@@ -90,7 +93,7 @@ class RepositoriesByRepoNames(RepositoryHandler):
         self.repository_list = relevant_repos
 
 
-class RepositoriesByRepoNamePattern(RepositoryHandler):
+class RepositoriesByRepoNamePattern(RequestHandler):
 
     MANDATORY_PARAMETERS = [
         "repo_white_pattern",
@@ -115,7 +118,7 @@ class RepositoriesByRepoNamePattern(RepositoryHandler):
         self.repository_list = relevant_repos
 
 
-class RepositoriesByQuery(RepositoryHandler):
+class RepositoriesByQuery(RequestHandler):
 
     MANDATORY_PARAMETERS = [
         "language",
@@ -210,12 +213,12 @@ class RepositoriesByQuery(RepositoryHandler):
             print("Error while reading query parameters!")
 
 
-class RepositoryHandlerFactory():
+class RequestHandlerFactory():
 
     @staticmethod
-    def get_repositories_handler(github_token, request_params):
+    def get_request_handler(github_token, request_params):
 
-        all_handlers = utilities.get_all_subclasses(RepositoryHandler)
+        all_handlers = utilities.get_all_subclasses(RequestHandler)
 
         valid_repo_type = None
         for repo_type in all_handlers:

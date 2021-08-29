@@ -38,10 +38,12 @@ class YAML_RequestDefinition(RequestDefinition):
                                         parameter)
 
         # Append project name to folder
-        # This structures the folder and avoids redundant inputs in yml config files
-        parameter["project_folder"] = parameter["project_folder"] + parameter["project_name"]
+        # This structures the folder and avoids redundant inputs in yml
+        # config files
+        parameter['project_folder'] = parameter['project_folder'] + \
+                                      parameter['project_name']
 
-        self.parameters = utilities.obj_to_dic(parameter, "Parameter")
+        self.parameters = utilities.obj_to_dic(parameter, 'Parameter')
 
     def __repr__(self):
         output = f"{self.filename} \n --------------------------\n"

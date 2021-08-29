@@ -13,11 +13,12 @@ language: "C#"
 #Start date in yyyy-mm-dd format
 start_date: 2020-01-01
 #End date in yyyy-mm-dd format
-end_date: 2020-01-02
+end_date: 2020-01-05
 #Star filter by (>,<, >= or<=)
-star_filter: ">15"
+star_filter: ">10"
 
 #################################################################
 # Content 
 content:
 - Repository
+- Issues

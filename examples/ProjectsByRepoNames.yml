@@ -9,7 +9,6 @@ project_folder: ./examples/
 # Repository selection by repo names
 
 repos_names:
-- "TUBAF-IFI-DiPiT/github2pandas"
 - "TUBAF-IFI-DiPiT/github2pandas_notebooks"
 - "TUBAF-IFI-DiPiT/github2pandas_manager"
 
