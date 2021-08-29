@@ -1,0 +1,19 @@
+project_name: Projects_byOrganizationNames
+
+#################################################################
+# Folder structure
+
+project_folder: ./examples/
+
+#################################################################
+# Repo specification
+
+organization_names:
+- TUBAF-IFI-DiPiT
+
+#################################################################
+# Content 
+content:
+- Repository
+- Issues
+- Version

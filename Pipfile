@@ -1,0 +1,14 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pyyaml = "*"
+github2pandas = {editable = true, ref = "repository", git = "https://github.com/TUBAF-IFI-DiPiT/github2pandas.git"}
+pygithub = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"

@@ -1,0 +1,21 @@
+project_name: Projects_byPattern
+
+#################################################################
+# Folder structure
+
+project_folder: ./examples/
+
+#################################################################
+# Repository selection by pattern name
+
+repo_white_pattern: 
+  - "github2pandas"
+
+repo_black_pattern: 
+  - "github2pandas_note"  # aiming at  TUBAF-IFI-DiPiT / github2pandas_notebooks 
+
+#################################################################
+# Content 
+content:
+- Issues
+- Version
