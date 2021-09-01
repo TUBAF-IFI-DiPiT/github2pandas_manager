@@ -72,6 +72,8 @@ class Github_data_extractor():
         "Workflows": aggWorkflows,
         "GitReleases": aggGitReleases
     }
+    
+    RAW_DATA_FOLDER = "raw_data"
 
     @staticmethod
     def start(github_token, request_handler):
@@ -87,7 +89,8 @@ class Github_data_extractor():
                          )
                     repo_base_folder = Path(
                         request_handler.request.parameters.project_folder,
-                        repo.name
+                        Github_data_extractor.RAW_DATA_FOLDER,
+                        repo.full_name.replace('/', '-')
                     )
                     repo_base_folder.mkdir(parents=True, exist_ok=True)
                     Github_data_extractor.CLASSES[content_element](repo, repo_base_folder, github_token)
