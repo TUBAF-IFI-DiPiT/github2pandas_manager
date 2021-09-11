@@ -1,0 +1,32 @@
+@startuml
+actor User
+participant github2pandas_manager
+participant github2pandas
+database github #99FF99
+
+== Initialization ==
+
+User -> github2pandas_manager: project description (.yaml)
+github2pandas_manager -> github2pandas_manager: generate request
+github2pandas_manager -> github: transmit request
+github -> github2pandas_manager: answer request
+github2pandas_manager -> github2pandas_manager: generate repository list
+
+== Data Aggregation ==
+
+loop repo_count times
+    loop {Commits, Issues, Workflows, ...}
+        note right of github2pandas_manager: Monitoring remaining GitHub request limits.
+        github2pandas_manager -> github2pandas: request individual data
+        github2pandas -> github: request raw data
+        github -> github2pandas
+        github2pandas -> github2pandas_manager: store data in project folder
+    end
+end
+github2pandas_manager -> github2pandas_manager: update aggregation history
+
+== Data Merge ==
+
+github2pandas_manager -> github2pandas_manager: merge individual raw data files
+github2pandas_manager -> User: requested data in as pandas or csv files
+@enduml
