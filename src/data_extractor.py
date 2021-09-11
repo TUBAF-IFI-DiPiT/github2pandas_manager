@@ -76,9 +76,11 @@ class Github_data_extractor():
     }
     
     RAW_DATA_FOLDER = "raw_data"
+    AGG_HISTORY_FILE = "aggregation_history.csv"
 
     @staticmethod
-    def start(github_token, request_handler, output_file_name = 'aggregation_history.csv'):
+    def start(github_token, request_handler,
+              output_file_name = AGG_HISTORY_FILE):
 
         # Prepare data frame for providing aggregation history
         status = pd.DataFrame()

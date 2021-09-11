@@ -13,9 +13,9 @@ language: "C#"
 #Start date in yyyy-mm-dd format
 start_date: 2020-01-01
 #End date in yyyy-mm-dd format
-end_date: 2020-01-05
+end_date: 2020-01-03
 #Star filter by (>,<, >= or<=)
-star_filter: ">10"
+star_filter: ">30"
 
 #################################################################
 # Content 
