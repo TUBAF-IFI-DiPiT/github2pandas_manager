@@ -49,6 +49,10 @@ class Github_data_extractor():
     def aggGitReleases(repo, repo_base_folder, github_token=None):
         pass
 
+    def aggUsers(repo, repo_base_folder, github_token=None):
+        # Users are automatically extracted by github2pandas
+        pass
+
     def check_remaining_github_requests(github_token, min_num=100):
         github_user = utilities.get_github_user(github_token)
         requests_remaning, requests_limit = github_user.rate_limiting
@@ -72,7 +76,8 @@ class Github_data_extractor():
         "Version": aggVersion,
         "PullRequests": aggPullRequests,
         "Workflows": aggWorkflows,
-        "GitReleases": aggGitReleases
+        "GitReleases": aggGitReleases,
+        "Users": aggUsers
     }
     
     AGG_HISTORY_FILE = "aggregation_history.csv"

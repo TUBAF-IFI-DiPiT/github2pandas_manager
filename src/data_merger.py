@@ -9,6 +9,8 @@ from github2pandas.version import Version
 from github2pandas.workflows import Workflows
 from github2pandas.repository import Repository
 from github2pandas.git_releases import GitReleases
+from github2pandas.utility import Utility
+
 import utilities
 
 
@@ -58,6 +60,11 @@ class Github_data_merger():
         df['repo_name'] = repo_name
         return df
 
+    def get_Users(repo_base_folder, repo_name):
+        df = Utility.get_users(repo_base_folder)
+        df['repo_name'] = repo_name
+        return df
+
     def get_Branches(repo_base_folder, repo_name):
         pass
 
@@ -76,7 +83,8 @@ class Github_data_merger():
         "Version": [get_Edits, get_Commits],
         "PullRequests": [get_PullRequests],
         "Workflows": [get_Workflows],
-        "GitReleases": [get_GitReleases]
+        "GitReleases": [get_GitReleases],
+        "Users": [get_Users]
     }
     
     RAW_DATA_FOLDER = "."
