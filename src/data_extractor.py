@@ -75,7 +75,6 @@ class Github_data_extractor():
         "GitReleases": aggGitReleases
     }
     
-    RAW_DATA_FOLDER = "raw_data"
     AGG_HISTORY_FILE = "aggregation_history.csv"
 
     @staticmethod
@@ -102,8 +101,8 @@ class Github_data_extractor():
                          )
                     repo_base_folder = Path(
                         request_handler.request.parameters.project_folder,
-                        Github_data_extractor.RAW_DATA_FOLDER,
-                        repo.full_name.replace('/', '-')
+                        repo.full_name.split('/')[0],
+                        repo.full_name.split('/')[1],
                     )
                     repo_base_folder.mkdir(parents=True, exist_ok=True)
                     Github_data_extractor.CLASSES[content_element](repo, repo_base_folder, github_token)

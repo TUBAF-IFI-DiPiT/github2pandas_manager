@@ -19,18 +19,22 @@ class Github_data_merger():
             df = pd.DataFrame()
             for index, repo in enumerate(request_handler.repository_list):
                 repo_base_folder = Path(
-                    project_base_folder,
-                    repo.full_name.replace('/', '-')
+                    request_handler.request.parameters.project_folder,
+                    repo.full_name.split('/')[0],
+                    repo.full_name.split('/')[1],
                 )
                 repo_df = merge_fct(repo_base_folder, repo.name)
                 if df.empty:
                     df = repo_df
                 else:
                     df = pd.concat([df, repo_df], axis=0)
+                    
             file_name = merge_fct.__name__.split('_')[1]
-            csv_output_path = Path(project_base_folder, file_name + '.csv')
+            csv_output_path = Path(project_base_folder, 
+                                   file_name + '.csv')
+            print(csv_output_path)
             # replace new lines in commit messages
-            df = df.apply(lambda x : x.replace('\n', '\\n'))
+            df = df.replace(r'\n',' ', regex=True) 
             df.to_csv(csv_output_path, index=False)
             output_path = Path(project_base_folder, file_name + '.p')
             with open(output_path, "wb") as f:
@@ -75,7 +79,7 @@ class Github_data_merger():
         "GitReleases": [get_GitReleases]
     }
     
-    RAW_DATA_FOLDER = "raw_data"
+    RAW_DATA_FOLDER = "."
 
     @staticmethod
     def merge(request_handler):
@@ -85,6 +89,7 @@ class Github_data_merger():
                     request_handler.request.parameters.project_folder,
                     Github_data_merger.RAW_DATA_FOLDER,
                 )
+                project_base_folder.mkdir(parents=True, exist_ok=True)
                 Github_data_merger.merge_pandas_tables(request_handler,
                                                        project_base_folder,
                                                        content_element)
