@@ -16,4 +16,5 @@ repos_names:
 # Content 
 content:
 - Repository
+- Issues
 - Version

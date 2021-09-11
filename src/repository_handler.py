@@ -30,19 +30,7 @@ class RequestHandler(ABC):
         else:
             output = "No repositories found according to request!"
         return output
-
-    def save_repositories_to_csv(self,
-                                 project_folder=None,
-                                 file_name='repositories.csv'):
-        if not project_folder:
-            project_folder = self.request.parameters.project_folder
-        output_path = Path(project_folder, file_name)
-        file = open(output_path, 'w+', newline='')
-
-        with file:
-            for repo in self.repository_list:
-                file.write(repo.full_name + "\n")
-
+    
 
 class RepositoriesByOrganization(RequestHandler):
 

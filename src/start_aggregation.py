@@ -7,7 +7,7 @@ import utilities
 from config_parser import YAML_RequestDefinition
 from repository_handler import RequestHandlerFactory
 from data_extractor import Github_data_extractor
-
+from data_merger import Github_data_merger
 
 def main(request_params, github_token):
     project_folder = Path(request_params.parameters.project_folder)
@@ -19,13 +19,16 @@ def main(request_params, github_token):
                 request_params=request_params
             )
 
-    request_handler.save_repositories_to_csv()
     #print(request_handler)
 
     data_extractor = Github_data_extractor.start(
              github_token=github_token,
              request_handler=request_handler
     )
+    
+    df = Github_data_merger.merge(
+        request_handler=request_handler
+        )
 
 
 if __name__ == "__main__":
