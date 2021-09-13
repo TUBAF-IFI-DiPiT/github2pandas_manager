@@ -11,14 +11,30 @@ project_folder: ./examples/
 #Language filter
 language: "C#"
 #Start date in yyyy-mm-dd format
-start_date: 2020-01-01
+start_date: 2021-02-01
 #End date in yyyy-mm-dd format
-end_date: 2020-01-02
+end_date: 2021-02-03
 #Star filter by (>,<, >= or<=)
-star_filter: ">30"
+star_filter: ">0"
 
 #################################################################
-# Content 
+# Content
 content:
-- Repository
-- Issues
+  - Repository
+  #- Issues
+
+
+# #Language filter
+# language: "C#"
+# #Start date in yyyy-mm-dd format
+# start_date: 2020-01-01
+# #End date in yyyy-mm-dd format
+# end_date: 2020-01-02
+# #Star filter by (>,<, >= or<=)
+# star_filter: ">30"
+
+# #################################################################
+# # Content 
+# content:
+# - Repository
+# - Issues

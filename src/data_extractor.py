@@ -98,6 +98,7 @@ class Github_data_extractor():
             if content_element in Github_data_extractor.CLASSES:
                 number_of_repos = len(request_handler.repository_list)
                 for index, repo in enumerate(request_handler.repository_list):
+                    index += 1
                     requests_remaning = Github_data_extractor.check_remaining_github_requests(github_token)
                     print("{0:10} - {1:3} / {2:3} - {3} ({4:4d})".format(
                             content_element,
@@ -120,3 +121,4 @@ class Github_data_extractor():
         file = open(output_path, 'w+', newline='')
         status.to_csv(file)
         return True
+    

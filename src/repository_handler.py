@@ -4,7 +4,7 @@ import yaml
 import re
 from pathlib import Path
 import datetime
-
+import pandas as pd
 import utilities
 from github2pandas.utility import Utility
 
@@ -123,6 +123,27 @@ class RepositoriesByQuery(RequestHandler):
         return self.repository_list
 
     def extract_language(self):
+        """
+        extract_language()
+        Extract and validate the Programming language name provided by the
+        user.It will be checked in the  Github known or supported programming
+        Languages list. If it exists, it returns the language name otherwise
+        it lets the user enter a valid language name.
+
+        Returns
+        -------
+        str
+            Name of Programming language
+
+        Notes
+        -----
+        Search by language
+        : https://docs.github.com/en/github/searching-for-information-on-github/searching-on-github/searching-code#search-by-language
+
+        full list of supported languages in github/linguist repository
+        : https://github.com/github/linguist/blob/master/lib/linguist/languages.yml.
+
+        """
         with open("github_language_specification.yml", "r") as f:
             language_specification = yaml.load(f, Loader=yaml.FullLoader)
 
@@ -137,6 +158,22 @@ class RepositoriesByQuery(RequestHandler):
             return None
 
     def extract_star_filter(self):
+        """
+        extract_star_filter()
+
+        Extract and validate the number of Stars and the comparison
+        symbols(>,<,>=,<=) provided by the user.It accepts only
+        a non-negative number or a non-negative number and one
+        of these symbols >,<,>= or <=.
+
+        Returns
+        -------
+        str
+            number of Stars or comparision symbols(>,<,>=,<=) and number of
+            Stars
+
+        """
+
         match = re.fullmatch(r'(>|<|=|>=|<=)?\d+',
                              self.request.parameters.star_filter)
 
@@ -148,6 +185,20 @@ class RepositoriesByQuery(RequestHandler):
             return None
 
     def extract_dates(self):
+        """
+        extract_dates()
+
+        Extract and validate the search start and end date.
+        The start date should not be earlier than the start date of GitHub,
+        i.e. 2008-04-10.
+        The end date should not be later than the current date.
+
+        Returns
+        -------
+        str
+            Date object in string format
+
+        """
         github_launched_date = datetime.date(2008, 4, 10)
         curr_date = datetime.datetime.today().date()
 
@@ -177,12 +228,139 @@ class RepositoriesByQuery(RequestHandler):
 
     def generate_github_query(self, language, star_filter, start_date,
                               end_date):
-        return "language:" + language + " " + \
+        if not end_date is None:
+            return "language:" + language + " " + \
                 "created:" + start_date + ".." + end_date + " " + \
                 "stars:" + star_filter
+        else:
+            return "language:"+ language + " " + \
+                "created:" + start_date+ " " + \
+                "stars:" + star_filter
 
+    # This method is temporary. 
+    def get_query_repos(self, reposList):
+        REPOS_BY_QUERY = "repos_byquery"
+
+        output_dir_path = Path(
+            "./examples", REPOS_BY_QUERY
+        )
+        output_dir_path.mkdir(parents=True, exist_ok=True)
+
+        output_file_path = Path(output_dir_path , "repos").with_suffix(".csv")
+
+        df_repo = pd.DataFrame()
+        for index, repo in enumerate(reposList):
+            repo_name = repo.full_name.split("/")[-1]
+            df_repo = df_repo.append(
+                {
+                    "repo_name": repo_name,
+                },
+                ignore_index=True,
+            )
+        print(
+           "All repositories for the specified search period or time window have been saved."
+        )
+
+    # checks if the file already exists. If it exists, then append to it, otherwise creates it and write into it.
+        if output_file_path.exists():
+            df_repo.to_csv(output_file_path, sep=",", mode="a", header=False, 
+            encoding="utf-8", index=False,
+            )
+        else:
+            df_repo.to_csv(output_file_path, sep=",", mode="w", header=False, 
+            encoding="utf-8", index=False,
+            )
+            
     def generate_large_repository_list(self):
-        pass
+        """
+        generate_large_repository_list(self)
+
+        Generate a list of repositories created on a day.
+        If the number of repositories is less than 1000.
+        """
+        print("Repositories are greater than 1000 from generate_large_repository_list")
+
+        language = self.extract_language()
+        star_filter = self.extract_star_filter()
+        start_date, end_date = self.extract_dates()
+        dates_slot_list = pd.date_range(start=start_date, end=end_date, freq="D")
+        for date in dates_slot_list:
+            search_date = date.strftime("%Y-%m-%d")
+            query = self.generate_github_query(language, star_filter, search_date, None)
+            github_user = utilities.get_github_user(self.github_token)
+            try:
+                repositories = github_user.search_repositories(query=query)
+                print(f"repositories from : {search_date}-> {repositories.totalCount}")
+                if repositories.totalCount >= 1000:
+                    self.generate_extra_large_repository_list(
+                        date, language, star_filter
+                    )
+
+                else:
+                    self.get_query_repos(list(repositories))
+            except Exception as e:
+                print(e)
+
+    def generate_extra_large_repository_list(self, date, language, star_filter):
+        """
+        generate_extra_large_repository_list(date, language, star_filter)
+
+        Create a list of repositories in half or quarter of a day or within 3 hours
+
+        Parameters
+        ----------
+        date : datetime
+            Date on which the repositories are created
+        language : str
+            Programming language, in which the repository with
+        star_filter : [str]
+            Number of starts to filter repository search
+        """
+
+        print(
+            "Repositories are greater than 1000 \
+            from generate_extra_large_repository_list"
+        )
+        start_date = date.strftime("%Y-%m-%dT%H:%M:%S")
+        hours_timespan = 12
+        hours_slot_end = date + datetime.timedelta(hours=hours_timespan)
+        end_date = hours_slot_end.strftime("%Y-%m-%dT%H:%M:%S")
+        date_end_hour = date + datetime.timedelta(hours=24)
+
+        while hours_slot_end <= date_end_hour:
+            query = self.generate_github_query(
+                language, star_filter, start_date, end_date
+            )
+            github_user = utilities.get_github_user(self.github_token)
+            try:
+                repositories = github_user.search_repositories(query=query)
+                print(
+                    print(f"repositories from : {start_date}-> {repositories.totalCount}")
+                )
+
+                if repositories.totalCount > 1000:
+                    if hours_timespan == 12:
+                        hours_timespan = 6
+                        hours_slot_end = datetime.datetime.strptime(
+                            start_date, "%Y-%m-%dT%H:%M:%S"
+                        ) + datetime.timedelta(hours=hours_timespan)
+                        end_date = hours_slot_end.strftime("%Y-%m-%dT%H:%M:%S")
+                    else:
+                        hours_timespan = 3
+                        hours_slot_end = datetime.datetime.strptime(
+                            start_date, "%Y-%m-%dT%H:%M:%S"
+                        ) + datetime.timedelta(hours=hours_timespan)
+                        end_date = hours_slot_end.strftime("%Y-%m-%dT%H:%M:%S")
+                else:
+                    self.get_query_repos(list(repositories))
+                    start_date = end_date
+                    hours_slot_end = hours_slot_end + datetime.timedelta(
+                        hours=hours_timespan
+                    )
+                    end_date = hours_slot_end.strftime("%Y-%m-%dT%H:%M:%S")
+                continue
+            except Exception as e:
+                print(e)
 
     def generate_repository_list(self):
         language = self.extract_language()
@@ -194,12 +372,13 @@ class RepositoriesByQuery(RequestHandler):
                                                start_date, end_date)
             github_user = utilities.get_github_user(self.github_token)
             repositories = github_user.search_repositories(query=query)
-            if repositories.totalCount > 1000:
+            if repositories.totalCount >= 1000:
                 self.generate_large_repository_list()
             self.repository_list = list(repositories)
         else:
             print("Error while reading query parameters!")
-
+    
+    
 
 class RequestHandlerFactory():
 
