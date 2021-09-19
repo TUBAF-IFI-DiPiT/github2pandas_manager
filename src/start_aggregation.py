@@ -19,7 +19,7 @@ def main(request_params, github_token):
                 request_params=request_params
             )
 
-    #print(request_handler)
+    print(f"{len(request_handler.repository_list)} machting repositories found.")
 
     data_extractor = Github_data_extractor.start(
              github_token=github_token,

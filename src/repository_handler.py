@@ -4,6 +4,8 @@ import yaml
 import re
 from pathlib import Path
 import datetime
+import pandas as pd
+import time
 
 import utilities
 from github2pandas.utility import Utility
@@ -171,14 +173,15 @@ class RepositoriesByQuery(RequestHandler):
                 valid_date_configuration = False
 
         if valid_date_configuration:
-            return start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d")
+            return start_date, end_date
         else:
             return None, None
 
     def generate_github_query(self, language, star_filter, start_date,
                               end_date):
         return "language:" + language + " " + \
-                "created:" + start_date + ".." + end_date + " " + \
+                "created:" + start_date.strftime("%Y-%m-%dT%H:%M:%S") +  \
+                ".." + end_date.strftime("%Y-%m-%dT%H:%M:%S") + " " + \
                 "stars:" + star_filter
 
     def generate_large_repository_list(self):
@@ -188,15 +191,49 @@ class RepositoriesByQuery(RequestHandler):
         language = self.extract_language()
         star_filter = self.extract_star_filter()
         start_date, end_date = self.extract_dates()
+        
+        periods = [2,                                  # range in two pieces (1 seems to be not possible)
+                   (end_date - start_date).days,       # days
+                   (end_date - start_date).days * 2,   # half days
+                   (end_date - start_date).days * 12,  # two hour slots
+                   (end_date - start_date).days * 24   # one hour slots
+                   ]
 
-        if language and star_filter and start_date and end_date:
-            query = self.generate_github_query(language, star_filter,
-                                               start_date, end_date)
+        if language and star_filter and start_date and end_date:       
             github_user = utilities.get_github_user(self.github_token)
-            repositories = github_user.search_repositories(query=query)
-            if repositories.totalCount > 1000:
-                self.generate_large_repository_list()
-            self.repository_list = list(repositories)
+            for period in periods:
+                print(f"Dividing range in {period} periods.")
+                dates_slot_list = pd.date_range(start=start_date, end=end_date, 
+                                                periods = period)
+                time_slots = zip(dates_slot_list, dates_slot_list[1:])
+                for time_slot in time_slots:
+                    query = self.generate_github_query(language, star_filter,
+                                                       time_slot[0], time_slot[1])
+                    repositories = github_user.search_repositories(query=query)    
+                    
+                    # The Search API has a custom rate limit. For requests using 
+                    # Basic Authentication, OAuth, or client ID and secret, you can 
+                    # make up to 30 requests per minute. For unauthenticated requests, 
+                    # the rate limit allows you to make up to 10 requests per minute.
+                    rate_limits = repositories[0]._requester.rate_limiting
+                    if rate_limits[0] < 10:  
+                        print("Running low on search rate ... waiting for one minute to refresh")
+                        time.sleep(60) # Delay for 1 minute (60 seconds).
+
+                    if repositories.totalCount < 1000:
+                        self.repository_list += list(repositories)
+                        print("{} - {} Repositories found ({})".format(\
+                                   time_slot[0].strftime("%Y-%m-%d %H:%M"), \
+                                    len(list(repositories)), repositories[0]._requester.rate_limiting[0])
+                              )
+                    else:
+                        print("Found more than 1000 repositories, starting temporal segmentation")
+                        self.repository_list = []
+                        break
+                # Complete repository list aggregated? -> Stop
+                # A new run with a smaller period is not necessary
+                if self.repository_list:
+                    break
         else:
             print("Error while reading query parameters!")
 

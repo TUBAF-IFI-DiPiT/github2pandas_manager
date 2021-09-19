@@ -53,23 +53,6 @@ class Github_data_extractor():
         # Users are automatically extracted by github2pandas
         pass
 
-    def check_remaining_github_requests(github_token, min_num=100):
-        github_user = utilities.get_github_user(github_token)
-        requests_remaning, requests_limit = github_user.rate_limiting
-        if ((requests_limit == 5000) & (requests_remaning < min_num)):
-            print("Waiting for request limit refresh ...")
-            reset_timestamp = github_user.rate_limiting_resettime
-            seconds_until_reset = reset_timestamp - time.time()
-            sleep_step_width = 1
-            sleeping_range = range(int(seconds_until_reset / sleep_step_width))
-            for i in utilities.progressbar(sleeping_range, "Sleeping : ", 60):
-                time.sleep(sleep_step_width)
-            requests_remaning, requests_limit = github_user.rate_limiting
-            print("Remaining request limit {0:5d} / {1:5d}".format(
-                                                     requests_remaning,
-                                                     requests_limit))
-        return requests_remaning
-
     CLASSES = {
         "Repository": aggRepository,
         "Issues": aggIssues,
@@ -98,7 +81,7 @@ class Github_data_extractor():
             if content_element in Github_data_extractor.CLASSES:
                 number_of_repos = len(request_handler.repository_list)
                 for index, repo in enumerate(request_handler.repository_list):
-                    requests_remaning = Github_data_extractor.check_remaining_github_requests(github_token)
+                    requests_remaning = utilities.check_remaining_github_requests(github_token)
                     print("{0:10} - {1:3} / {2:3} - {3} ({4:4d})".format(
                             content_element,
                             index, number_of_repos, repo.full_name,
