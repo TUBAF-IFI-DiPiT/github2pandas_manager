@@ -7,7 +7,7 @@ from github2pandas.issues import Issues
 from github2pandas.pull_requests import PullRequests
 from github2pandas.version import Version
 from github2pandas.workflows import Workflows
-from github2pandas.repository import Repository
+from repository import Repository
 from github2pandas.git_releases import GitReleases
 
 import utilities
@@ -41,13 +41,25 @@ class Github_data_extractor():
         )
 
     def aggPullRequests(repo, repo_base_folder, github_token=None):
-        pass
+        PullRequests.generate_pull_request_pandas_tables(
+            repo=repo,
+            data_root_dir=repo_base_folder
+        )
+        #pass
 
     def aggWorkflows(repo, repo_base_folder, github_token=None):
-        pass
+        Workflows.generate_workflow_pandas_tables(
+            repo=repo,
+            data_root_dir=repo_base_folder
+        )
+        #pass
 
     def aggGitReleases(repo, repo_base_folder, github_token=None):
-        pass
+        GitReleases.generate_git_releases_pandas_tables(
+            repo=repo,
+            data_root_dir=repo_base_folder           
+        )
+        #pass
 
     def aggUsers(repo, repo_base_folder, github_token=None):
         # Users are automatically extracted by github2pandas
