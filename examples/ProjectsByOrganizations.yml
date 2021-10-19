@@ -17,3 +17,6 @@ content:
 - Repository
 - Issues
 - Versions
+- GitReleases
+- PullRequests
+- Workflows

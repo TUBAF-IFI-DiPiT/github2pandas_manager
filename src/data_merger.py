@@ -7,7 +7,7 @@ from github2pandas.issues import Issues
 from github2pandas.pull_requests import PullRequests
 from github2pandas.version import Version
 from github2pandas.workflows import Workflows
-from github2pandas.repository import Repository
+from repository import Repository
 from github2pandas.git_releases import GitReleases
 from github2pandas.utility import Utility
 
@@ -26,10 +26,10 @@ class Github_data_merger():
                     repo.full_name.split('/')[1],
                 )
                 repo_df = merge_fct(repo_base_folder, repo.name)
-                if df.empty:
-                    df = repo_df
-                else:
-                    df = pd.concat([df, repo_df], axis=0)
+                #if df.empty:
+                #    df = repo_df
+                #else:
+                df = pd.concat([df, repo_df], axis=0)
                     
             file_name = merge_fct.__name__.split('_')[1]
             csv_output_path = Path(project_base_folder, 
@@ -68,14 +68,23 @@ class Github_data_merger():
     def get_Branches(repo_base_folder, repo_name):
         pass
 
-    def get_PullRequests(repo_base_folder):
-        pass
+    def get_PullRequests(repo_base_folder, repo_name):
+        #pass
+        df = PullRequests.get_pull_requests(repo_base_folder)
+        df['repo_name'] = repo_name
+        return df
 
-    def get_Workflows(repo_base_folder):
-        pass
+    def get_Workflows(repo_base_folder, repo_name):
+        #pass
+        df = Workflows.get_workflows(repo_base_folder)
+        df['repo_name'] = repo_name
+        return df
 
-    def get_GitReleases(repo_base_folder):
-        pass
+    def get_GitReleases(repo_base_folder, repo_name):
+        #pass
+        df = GitReleases.get_git_releases(repo_base_folder)
+        df['repo_name'] = repo_name
+        return df
 
     CLASSES = {
         "Repository": [get_Repositories],
