@@ -12,7 +12,42 @@ from github2pandas.utility import Utility
 
 
 class RequestHandler(ABC):
+    """Abstract Class to create a Request Hander.
+    
+    Methods
+    -------
+    get_repository_list():
+        Abstract Method to get a List of repositories.
+    generate_repository_list():
+        Abstract Method to generate List of repositories.
+    """
+    
+    
     def __init__(self, github_token, parameters):
+        """Constractor of RequestHandler Class.
+
+        Parameters
+        ----------
+        github_token : str
+            GitHub API Access Authentication token.
+        parameters : str
+            Parameters requerd for the search the repositories.
+
+        Attributes
+        ----------
+        github_token : str
+            GitHub API Access Authentication token.
+        request : str
+           Parameters requerd to search for repositories.
+        repository_list : List (str)
+            List for the repositories
+        time_slot_list : List (str)
+            List for the timeslots
+        github_user : GitHub User
+            Authenticated GitHub User.
+
+        """
+
         self.repository_list = []
         self.time_slot_list = []
         self.github_token = github_token
@@ -21,10 +56,17 @@ class RequestHandler(ABC):
 
     @abstractmethod
     def get_repository_list(self):
+        """Abstract method that gets a list of all repositories."""
+
         pass
 
     @abstractmethod
     def generate_repository_list(self):
+        """
+        Abstract method that generates a list of all repositories found 
+        from the search.
+        """
+
         pass
 
     def __repr__(self):
@@ -38,17 +80,69 @@ class RequestHandler(ABC):
 
 
 class RepositoriesByOrganization(RequestHandler):
+    """Class to get repositories belonging to an organization.
+
+    Parameters
+    ----------
+    RequestHandler : RequestHandler
+        object of RequestHandler. 
+
+    Attributes
+    ----------
+    MANDATORY_PARAMETERS : List
+        List of organization's name.
+
+    Methods
+    -------
+    get_repository_list():
+        List of repositories belonging to an organization.
+    generate_repository_list():
+        Retrieve all repositories belonging to an organization.
+
+    """
 
     MANDATORY_PARAMETERS = ["organization_names"]
 
     def __init__(self, github_token, request_params):
+        """ Constractor of RepositoriesByOrganization Class.
+
+        Parameters
+        ----------
+        github_token : str
+            GitHub API Access Authentication token.
+        request_params : str
+            Parameters requerd for the search
+
+        """
+
         super().__init__(github_token, request_params)
         self.generate_repository_list()
 
     def get_repository_list(self):
+        """
+        get_repository_list()
+
+        Implements the Abstract Method of the base class to return a list of 
+        all repositories belonging to an organization.
+
+        Returns
+        -------
+        list :
+            List of repositories.
+
+        """
+
         return self.repository_list
 
     def generate_repository_list(self):
+        """
+        generate_repository_list()
+
+        Implements the Abstract Method of the base class to Retrieve all 
+        repositories belonging to an organization.
+
+        """
+        
         relevant_repos = []
         github_user = utilities.get_github_user(self.github_token)
         for org_name in self.request.parameters.organization_names:
@@ -58,18 +152,69 @@ class RepositoriesByOrganization(RequestHandler):
         self.repository_list = relevant_repos
 
 
-class RepositoriesByRepoNames(RequestHandler):
+class RepositoriesByRepoNames(RequestHandler): 
+    """Class to get repositories by Name.
+
+    Parameters
+    ----------
+    RequestHandler : RequestHandler
+        object of RequestHandler 
+
+    Attributes
+    ----------
+    MANDATORY_PARAMETERS : List
+        List of repositories's name.
+
+    Methods
+    -------
+    get_repository_list():
+        List of repositories based on repositories' name.
+    generate_repository_list():
+        Retrieves all repositories based on repositories' name.
+
+    """
 
     MANDATORY_PARAMETERS = ["repos_names"]
 
     def __init__(self, github_token, request_params):
+        """Constractor of RepositoriesByRepoNames Class.
+
+        Parameters
+        ----------
+        github_token : str
+            GitHub API Access Authentication token.
+        request_params : str
+            Parameters requerd for the search
+        """
+
         super().__init__(github_token, request_params)
         self.generate_repository_list()
 
     def get_repository_list(self):
+        """
+        get_repository_list()
+
+        Implements the Abstract Method of the base class to return a list 
+        of all repositories according to the repositories' names.
+
+        Returns
+        -------
+        list :
+            List of repositories.
+
+        """
+
         return self.repository_list
 
     def generate_repository_list(self):
+        """
+        generate_repository_list()
+
+        Implements the Abstract Method of the base class to retrieve all 
+        repositories according to the repositories' names.
+
+        """
+
         relevant_repos = []
         repo_name_list = self.request.parameters.repos_names
         github_user = utilities.get_github_user(self.github_token)
@@ -83,17 +228,69 @@ class RepositoriesByRepoNames(RequestHandler):
 
 
 class RepositoriesByRepoNamePattern(RequestHandler):
+    """Class to get repositories by the Name pattern.
+
+    Parameters
+    ----------
+    RequestHandler : RequestHandler
+        object of RequestHandler. 
+
+    Attributes
+    ----------
+    MANDATORY_PARAMETERS : List
+        List of repository white and black pattern.
+
+    Methods
+    -------
+    get_repository_list():
+        Returns a List of repositories based on the white or black pattern  
+        filters.
+    generate_repository_list():
+        Retrieve all repositories belonging based on the white or black pattern.
+
+    """
 
     MANDATORY_PARAMETERS = ["repo_white_pattern", "repo_black_pattern"]
 
     def __init__(self, github_token, request_params):
+        """ Constractor of RepositoriesByRepoNamePattern Class.
+
+        Parameters
+        ----------
+        github_token : str
+            GitHub API Access Authentication token.
+        request_params : str
+            Parameters requerd for the search.
+
+        """
+        
         super().__init__(github_token, request_params)
         self.generate_repository_list()
 
     def get_repository_list(self):
+        """
+        get_repository_list(self)
+
+        Implements the Abstract Method of the base class to return a list of 
+        all repositories based on the white or black pattern.
+
+        Returns
+        -------
+        list :
+            List of repositories.
+
+        """
+
         return self.repository_list
 
     def generate_repository_list(self):
+        """
+        generate_repository_list()
+
+        Implements the Abstract Method of the base class to retrieve all 
+        repositories based on the white or black pattern.
+
+        """
         whitelist_patterns = self.request.parameters.repo_white_pattern
         blacklist_patterns = self.request.parameters.repo_black_pattern
         relevant_repos = Utility.get_repos(
@@ -106,25 +303,101 @@ class RepositoriesByRepoNamePattern(RequestHandler):
 
 
 class RepositoriesByQuery(RequestHandler):
+    """Class to get repositories by the Search query.
+
+    Parameters
+    ----------
+    RequestHandler : RequestHandler
+        object of RequestHandler 
+
+    Attributes
+    ----------
+    MANDATORY_PARAMETERS : List
+        List of search qualifiers and filters.
+
+    Methods
+    -------
+    get_repository_list():
+        Returns a List of repositories based on the search qualifies and 
+        filters.
+    generate_repository_list():
+        Retrieve all repositories repositories based on the search qualifies and 
+        filters.
+    def get_time_slot_list():
+        Returns a List of small timeslots of the search period. 
+    extract_language():
+        Extract and validate the repository's Programming language.
+    extract_star_filter():
+        Extracts and validates the number of stars and the comparison symbols.
+    extract_dates():
+        Extract and validate the search start and end date.
+    generate_github_query(language, star_filter, start_date, end_date):
+        generates a search query based on the qualifiers and filters.
+    generate_short_time_slot(date_interval):
+        Divide the Datetime interval into more small time segments.
+    generate_time_slot_list():
+        generates suitable small Datetime interval timeslots for the search by
+        dividing the specified search period.
+    generate_repository_list():
+        generate a list of repositories for the specified search period.
+
+    """
 
     MANDATORY_PARAMETERS = [
         "language", "start_date", "end_date", "star_filter"
     ]
 
     def __init__(self, github_token, request_params):
+        """ Constractor of RepositoriesByQuery Class
+
+        Parameters
+        ----------
+        github_token : str
+            GitHub API Access Authentication token.
+        request_params : str
+            Parameters requerd for the search.
+
+        """
+
         super().__init__(github_token, request_params)
         self.generate_time_slot_list()
         self.generate_repository_list()
 
     def get_repository_list(self):
+        """
+        get_repository_list(self)
+
+        Implements the Abstract Method of the base class to return a list of 
+        all repositories based on the search qualifiers and filters.
+
+        Returns
+        -------
+        list : 
+            List of repositories.
+
+        """
+
         return self.repository_list
 
     def get_time_slot_list(self):
+        """
+        get_time_slot_list()
+
+        Returns a list of Datetime interval slots of the specified search period.
+
+        Returns
+        -------
+        list 
+            a list of small Datetime interval timeslots.
+
+        """
+
         return self.time_slot_list
 
     def extract_language(self):
         """
         extract_language()
+
         Extract and validate the Programming language name provided by the
         user.It will be checked in the  Github known or supported programming
         Languages list. If it exists, it returns the language name otherwise
@@ -133,7 +406,7 @@ class RepositoriesByQuery(RequestHandler):
         Returns
         -------
         str
-            Name of Programming language
+            Name of Programming language.
 
         Notes
         -----
@@ -163,16 +436,17 @@ class RepositoriesByQuery(RequestHandler):
         """
         extract_star_filter()
 
-        Extract and validate the number of Stars and the comparison
-        symbols(>,<,>=,<=) provided by the user.It accepts only
-        a non-negative number or a non-negative number and one
-        of these symbols >,<,>= or <=.
+        Extracts and validates the number of stars and the comparison symbols
+        (>,<,>=,<=) if they are specified as additional filters. Only a 
+        non-negative number or a non-negative number and one of these 
+        comparison symbols (>,<,>= or <= )are allowed.
+        Example: star = 5 or =<5  or <=5 or >5 or >=5
 
         Returns
         -------
         str
-            number of Stars or comparision symbols(>,<,>=,<=) and number of
-            Stars
+            number of Stars with or without comparison symbols(>,<,>=,<=) and 
+            number of Stars.
 
         """
 
@@ -201,6 +475,7 @@ class RepositoriesByQuery(RequestHandler):
             Date object in string format
 
         """
+
         github_launched_date = datetime.date(2008, 4, 10)
         curr_date = datetime.datetime.today().date()
 
@@ -257,6 +532,7 @@ class RepositoriesByQuery(RequestHandler):
         str
             search query based onn the provided parameters as search qualifiers
         """
+
         return ("language:" + language + " " + "created:" +
                 start_date.strftime("%Y-%m-%dT%H:%M:%S") + ".." +
                 end_date.strftime("%Y-%m-%dT%H:%M:%S") + " " + "stars:" +
@@ -266,14 +542,15 @@ class RepositoriesByQuery(RequestHandler):
         """
         generate_short_time_slot(date_interval)
 
-        Divide the two-day interval into small time segments, such as one day,
-        half a day, six, three, or one hour, to further narrow the search 
-        period
+        Divide the Datetime interval further into small time segments, such as
+        one day,half a day, six, three, or one hour, to further narrow the 
+        search period
 
         Parameters
         ----------
         date_interval :  IntervalIndex
             a time/date interval index from the pandas interval range 
+
         """
 
         language = self.extract_language()
@@ -333,10 +610,17 @@ class RepositoriesByQuery(RequestHandler):
         """
         generate_time_slot_list()
 
-        generates a suitable time slot for the specified search period. 
-        The GitHub API allows authenticated users 1,000 requests per hour per
-        repository. Therefore, it is necessary to narrow down the search period
+        creates suitable small timeslots by splitting the specified search 
+        period. The GitHub API allows authenticated users 1,000 repositories 
+        per hour and per request for the specified search period. To get all 
+        repositories created in a given search period, the search period must 
+        be split into small time slots. The number of repositories created in 
+        each time slot must be less than 1000, and finally, all repositories 
+        from each time slot are aggregated to get all repositories created in 
+        the search period.
+
         """
+        
         language = self.extract_language()
         star_filter = self.extract_star_filter()
         start_date, end_date = self.extract_dates()
@@ -406,14 +690,11 @@ class RepositoriesByQuery(RequestHandler):
         """
         generate_repository_list(self)
 
-        create a list of repositories created in the specified search period.
+        generates a list of repositories created in the specified search 
+        period based on the search criteria and filters.
         
-
-        Returns
-        -------
-         list
-             List of the found repositories
         """
+
         language = self.extract_language()
         star_filter = self.extract_star_filter()
         start_date, end_date = self.extract_dates()
@@ -455,8 +736,29 @@ class RepositoriesByQuery(RequestHandler):
 
 
 class RequestHandlerFactory:
+    """Class to check the mandatory parameters 
+
+    get_request_handler(github_token, request_params):
+        
+    """
+
     @staticmethod
     def get_request_handler(github_token, request_params):
+        """ Gets a RequestHandler to search repositories. 
+
+        Parameters
+        ----------
+        github_token : str
+            GitHub API Access Authentication token.
+        request_params : str
+            Parameters requerd for the search
+
+        Returns
+        -------
+        RequestHandler: 
+            Object of RequestHandler Class or its subclass.
+
+        """
 
         all_handlers = utilities.get_all_subclasses(RequestHandler)
 
