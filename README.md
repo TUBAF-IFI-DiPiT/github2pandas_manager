@@ -46,4 +46,4 @@ While the first two are used to structure the folders to hold the data, the last
 + `Workflows`
 + `GitReleases`
 
-An overview of the information contained in each can be found in the [wiki of the gitlab2pandas](https://github.com/TUBAF-IFI-DiPiT/github2pandas/wiki) project.
+An overview of the information contained in each data frame can be found in the [wiki of the gitlab2pandas](https://github.com/TUBAF-IFI-DiPiT/github2pandas/wiki) project.
