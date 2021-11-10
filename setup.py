@@ -2,15 +2,15 @@
 # https://pypi.org/project/pipenv-setup/
 
 from setuptools import setup
-from github2pandas import __version__
+from github2pandas_manager import __version__
 
 with open("README.md", "r") as f:
    long_description = f.read()
 
 setup(
-   name="github2pandas",
+   name="github2pandas_manager",
    version=__version__,
-   packages=["github2pandas"],
+   packages=["github2pandas_manager"],
    license="BSD 2",
    description="Aggregation of github activities on multiple repositories based on github2pandas",
    long_description = long_description,
