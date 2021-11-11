@@ -10,7 +10,7 @@ from github2pandas.workflows import Workflows
 from github2pandas.repository import Repository
 from github2pandas.git_releases import GitReleases
 
-import utilities
+from github2pandas_manager import utilities
 
 
 class Github_data_extractor():

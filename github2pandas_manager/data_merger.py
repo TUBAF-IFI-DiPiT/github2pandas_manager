@@ -11,7 +11,7 @@ from github2pandas.repository import Repository
 from github2pandas.git_releases import GitReleases
 from github2pandas.utility import Utility
 
-import utilities
+from github2pandas_manager import utilities
 
 
 class Github_data_merger():

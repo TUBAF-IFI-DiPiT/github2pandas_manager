@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 import yaml
 
-import utilities
-
+from github2pandas_manager import utilities
 
 class RequestDefinition(ABC):
 
