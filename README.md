@@ -6,12 +6,28 @@ Take a view to the documentation of [github2pandas](https://github.com/TUBAF-IFI
 
 ## Installation
 
-Still it does not exist a pip based version of `github2pandas_manager`. Hence, it is necessary to clone and to install the dependencies manually.
+`github2pandas-manager` is available on [pypi](https://pypi.org/project/github2pandas-manager/). Use pip to install the package.
+
+### global
+
+On Linux:
 
 ```
-git clone https://github.com/TUBAF-IFI-DiPiT/github2pandas_manager.git
-cd github2pandas 
-pipenv install
+sudo pip3 install github2pandas-manager 
+sudo pip install github2pandas-manager
+```
+
+On Windows as admin or for one user:
+
+```
+pip install github2pandas-manager
+pip install --user github2pandas-manager
+```
+
+### in virtual environment:
+
+```
+pipenv install github2pandas-manager
 ```
 
 In addition a GitHub token is required for authentication. The [website](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) describes how you can generate this for your GitHub account. Add your toke to an hidden `.env` file, an example is given in `.env.example`. 
