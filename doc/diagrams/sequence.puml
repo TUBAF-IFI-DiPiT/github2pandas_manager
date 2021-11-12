@@ -4,7 +4,7 @@ participant github2pandas_manager
 participant github2pandas
 database github #99FF99
 
-== Initialization ==
+== Repository Aggregation ==
 
 User -> github2pandas_manager: project description (.yaml)
 github2pandas_manager -> github2pandas_manager: generate request
