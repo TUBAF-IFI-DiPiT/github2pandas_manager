@@ -6,7 +6,7 @@ database github #99FF99
 
 == Repository Aggregation ==
 
-User -> github2pandas_manager: project description (.yaml)
+User -> github2pandas_manager: repository patterns (.yaml)
 github2pandas_manager -> github2pandas_manager: generate request
 github2pandas_manager -> github: transmit request
 github -> github2pandas_manager: answer request
