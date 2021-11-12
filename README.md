@@ -2,6 +2,8 @@
 
 `github2pandas_manager` coordinates data aggregation activities for multiple GitHub-repositories. The user selects a list of repositories by names, name pattern, organizations or individual queries and provides a collection of versions, releases, pull-requests etc. For this purpose `github2pandas_manager` reads a configuration file (yml), collects the referenced repositories and provides the demanded information as Python pandas files. 
 
+![Workflow](http://www.plantuml.com/plantuml/svg/fLDDYnD14BtthoZmeg1py9P0P4LPzR0NGJmkbUbAfxG_nghg3OlutqqFSKRSsMYmOPXYfjvxLU_HLseeLbDqs5iH-AGaRa0nxdd0R13OzdNxybXxrDk46SEv3kVHS8jAfy_mPBMwlbwjdDjiu2CDHTcAtCFh48G26fSCcurpJHTUl5gMMuFCo07DIBB2q-uUKtpc5Y1dkG9b4ZG2eM-LrFv6i0OJp9hO_a2SqS2i1vAf_pz6dFQEh3Qw-1OD7_WNInd6xjk-r6nWd4WT7C_uv_kRaXARFeSFgfMExyz5lkvYEHpBhkj-E3YTN9eiXxr1sJqstqt9RIZE0OGIScxLExRtTVjhPuZS1Bk9-DyyM4zupfxls5UCuD5mcMV6pq31mnBYWTGPnkMjrOhGI0sSOP3oXNg3NOcUP2IZx5rxBesx3XwD07_BTC_QKfy3lo49rAA-c3sDoDdEoI3OSIHzdA_ToSbMyjFcg73ogWZqUdVYkQBiQue_0G00)
+
 Take a view to the documentation of [github2pandas](https://github.com/TUBAF-IFI-DiPiT/github2pandas) for being familiar with the individual aggregation classes.
 
 ## Installation
