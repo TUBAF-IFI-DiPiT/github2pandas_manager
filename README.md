@@ -2,16 +2,34 @@
 
 `github2pandas_manager` coordinates data aggregation activities for multiple GitHub-repositories. The user selects a list of repositories by names, name pattern, organizations or individual queries and provides a collection of versions, releases, pull-requests etc. For this purpose `github2pandas_manager` reads a configuration file (yml), collects the referenced repositories and provides the demanded information as Python pandas files. 
 
+![Workflow](http://www.plantuml.com/plantuml/svg/fLDDYnD14BtthoZmeg1py9P0P4LPzR0NGJmkbUbAfxG_nghg3OlutqqFSKRSsMYmOPXYfjvxLU_HLseeLbDqs5iH-AGaRa0nxdd0R13OzdNxybXxrDk46SEv3kVHS8jAfy_mPBMwlbwjdDjiu2CDHTcAtCFh48G26fSCcurpJHTUl5gMMuFCo07DIBB2q-uUKtpc5Y1dkG9b4ZG2eM-LrFv6i0OJp9hO_a2SqS2i1vAf_pz6dFQEh3Qw-1OD7_WNInd6xjk-r6nWd4WT7C_uv_kRaXARFeSFgfMExyz5lkvYEHpBhkj-E3YTN9eiXxr1sJqstqt9RIZE0OGIScxLExRtTVjhPuZS1Bk9-DyyM4zupfxls5UCuD5mcMV6pq31mnBYWTGPnkMjrOhGI0sSOP3oXNg3NOcUP2IZx5rxBesx3XwD07_BTC_QKfy3lo49rAA-c3sDoDdEoI3OSIHzdA_ToSbMyjFcg73ogWZqUdVYkQBiQue_0G00)
+
 Take a view to the documentation of [github2pandas](https://github.com/TUBAF-IFI-DiPiT/github2pandas) for being familiar with the individual aggregation classes.
 
 ## Installation
 
-Still it does not exist a pip based version of `github2pandas_manager`. Hence, it is necessary to clone and to install the dependencies manually.
+`github2pandas-manager` is available on [pypi](https://pypi.org/project/github2pandas-manager/). Use pip to install the package.
+
+### global
+
+On Linux:
 
 ```
-git clone https://github.com/TUBAF-IFI-DiPiT/github2pandas_manager.git
-cd github2pandas 
-pipenv install
+sudo pip3 install github2pandas-manager 
+sudo pip install github2pandas-manager
+```
+
+On Windows as admin or for one user:
+
+```
+pip install github2pandas-manager
+pip install --user github2pandas-manager
+```
+
+### in virtual environment:
+
+```
+pipenv install github2pandas-manager
 ```
 
 In addition a GitHub token is required for authentication. The [website](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) describes how you can generate this for your GitHub account. Add your toke to an hidden `.env` file, an example is given in `.env.example`. 
