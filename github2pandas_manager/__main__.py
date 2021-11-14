@@ -3,10 +3,10 @@ from pathlib import Path
 from dotenv import load_dotenv, find_dotenv
 import os
 
-from config_parser import YAML_RequestDefinition
-from repository_handler import RequestHandlerFactory
-from data_extractor import Github_data_extractor
-from data_merger import Github_data_merger
+from github2pandas_manager.config_parser import YAML_RequestDefinition
+from github2pandas_manager.repository_handler import RequestHandlerFactory
+from github2pandas_manager.data_extractor import Github_data_extractor
+from github2pandas_manager.data_merger import Github_data_merger
 from github2pandas_manager import utilities
 
 def main(request_params, github_token):
