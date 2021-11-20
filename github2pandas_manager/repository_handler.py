@@ -8,6 +8,7 @@ import pandas as pd
 import time
 
 from github2pandas_manager import utilities
+from github2pandas.utility import Utility
 
 
 class RequestHandler(ABC):
