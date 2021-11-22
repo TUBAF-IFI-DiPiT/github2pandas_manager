@@ -48,7 +48,7 @@ The [example](https://github.com/TUBAF-IFI-DiPiT/github2pandas_manager/tree/main
 In order to start the examples just run:
 
 ```
-pipenv run python github2pandas_manager -path ./examples/ProjectsByQuery.yml
+pipenv run python -m github2pandas_manager -path ./examples/ProjectsByQuery.yml
 ```
 
 ## YAML-Configuration schema
