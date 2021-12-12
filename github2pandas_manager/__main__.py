@@ -21,14 +21,15 @@ def main(request_params, github_token):
 
     print(f"{len(request_handler.repository_list)} machting repositories found.")
 
-    data_extractor = Github_data_extractor.start(
-             github_token=github_token,
-             request_handler=request_handler
-    )
-    
-    df = Github_data_merger.merge(
-        request_handler=request_handler
+    if len(request_handler.repository_list) > 0:
+        data_extractor = Github_data_extractor.start(
+                github_token=github_token,
+                request_handler=request_handler
         )
+        
+        df = Github_data_merger.merge(
+            request_handler=request_handler
+            )
 
 
 if __name__ == "__main__":
@@ -42,7 +43,7 @@ if __name__ == "__main__":
     request_params = YAML_RequestDefinition(arguments.config_file)
 
     load_dotenv(find_dotenv())
-    github_token = os.getenv("GITHUB_API_TOKEN")
+    github_token = os.getenv("ACCESS_TOKEN")
 
     main(request_params=request_params, github_token=github_token)
     print("Aus Maus")
