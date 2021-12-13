@@ -1,6 +1,5 @@
 import argparse
 from pathlib import Path
-from dotenv import load_dotenv, find_dotenv
 import os
 
 from github2pandas_manager.config_parser import YAML_RequestDefinition
@@ -42,8 +41,7 @@ if __name__ == "__main__":
     arguments = parser.parse_args()
     request_params = YAML_RequestDefinition(arguments.config_file)
 
-    load_dotenv(find_dotenv())
-    github_token = os.getenv("ACCESS_TOKEN")
+    github_token = os.getenv("TOKEN")
 
     main(request_params=request_params, github_token=github_token)
     print("Aus Maus")
