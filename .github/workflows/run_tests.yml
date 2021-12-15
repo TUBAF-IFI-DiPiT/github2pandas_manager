@@ -28,7 +28,6 @@ jobs:
 
       - name: Run generation
         env:
-             TOKEN: ${{ secrets.GITHUB_TOKEN }}
+             TOKEN: ${{ secrets.TOKEN }}
         run: |
-             pipenv run python -m ipykernel install --user --name mygreatenv --display-name "My Great Env"
              pipenv run python github2pandas_manager/__main__.py -path ./examples/ProjectsByRepoNamePatterns.yml
