@@ -24,10 +24,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-             pipenv install github2pandas_manager
+             pip install github2pandas_manager
 
       - name: Run generation
         env:
              TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-             pipenv run python3 github2pandas_manager/__main__.py -path ./examples/ProjectsByRepoNamePatterns.yml
+             python3 github2pandas_manager/__main__.py -path ./examples/ProjectsByRepoNamePatterns.yml
