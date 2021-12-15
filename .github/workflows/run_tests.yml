@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  extract_github_activities:
+  run_examples:
     runs-on: ubuntu-latest
     steps:
       - name: Install pip
@@ -23,4 +23,4 @@ jobs:
         env:
              TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-             pipenv run python3 -m github2pandas_manager -path ./example/ProjectsByRepoNamePatterns.yml
+             pipenv run python3 -m github2pandas_manager -path ./examples/ProjectsByRepoNamePatterns.yml
