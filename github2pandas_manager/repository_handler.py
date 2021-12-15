@@ -214,7 +214,6 @@ class RepositoriesByRepoNames(RequestHandler):
         repositories according to the repositories' names.
 
         """
-
         relevant_repos = []
         repo_name_list = self.request.parameters.repos_names
         github_user = utilities.get_github_user(self.github_token)
@@ -291,6 +290,10 @@ class RepositoriesByRepoNamePattern(RequestHandler):
         repositories based on the white or black pattern.
 
         """
+        print("###########################################################")
+        print(self.github_token)
+        print(len(self.github_token))
+        print("###########################################################")
         whitelist_patterns = self.request.parameters.repo_white_pattern
         blacklist_patterns = self.request.parameters.repo_black_pattern
         relevant_repos = Utility.get_repos(
