@@ -30,4 +30,4 @@ jobs:
         env:
              TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-             pipenv run python3 -m github2pandas_manager -path ./examples/ProjectsByRepoNamePatterns.yml
+             pipenv run python3 github2pandas_manager/__main__.py -path ./examples/ProjectsByRepoNamePatterns.yml
