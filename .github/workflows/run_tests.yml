@@ -1,4 +1,4 @@
-name: Run examples in current release
+name: Run examples in current version
 
 on:
   push:
@@ -10,12 +10,9 @@ jobs:
   run_examples:
     runs-on: ubuntu-latest
     steps:
+
       - name: Check out current repository
         uses: actions/checkout@v2
-        
-      - name: Print folder structure
-        run: |
-             ls -all
     
       - name: Install pip
         run: |
@@ -24,7 +21,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-             pipenv install 
              pipenv install github2pandas_manager
 
       - name: Run generation
