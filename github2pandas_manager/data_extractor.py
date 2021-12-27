@@ -93,7 +93,7 @@ class Github_data_extractor():
             if content_element in Github_data_extractor.CLASSES:
                 number_of_repos = len(request_handler.repository_list)
                 for index, repo in enumerate(request_handler.repository_list):
-                    requests_remaning = utilities.check_remaining_github_requests(github_token)
+                    requests_remaning = utilities.check_github_requests_limits(github_token)
                     print("{0:10} - {1:3} / {2:3} - {3} ({4:4d})".format(
                             content_element,
                             index, number_of_repos, repo.full_name,

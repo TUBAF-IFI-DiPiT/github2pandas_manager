@@ -68,12 +68,12 @@ def progressbar(it, prefix="", size=60, file=sys.stdout):
     file.write("\n")
     file.flush()
     
-def check_remaining_github_requests(github_token, min_num=100, show_state=False):
+def check_github_requests_limits(github_token, min_limit=100, show_msg=False):
     github_user = get_github_user(github_token)
     requests_remaning, requests_limit = github_user.rate_limiting
-    if show_state:
+    if show_msg:
         print(requests_remaning, requests_limit)
-    if ((requests_limit == 5000) & (requests_remaning < min_num)):
+    if ((requests_limit == 5000) & (requests_remaning < min_limit)):
         print("Waiting for request limit refresh ...")
         reset_timestamp = github_user.rate_limiting_resettime
         seconds_until_reset = reset_timestamp - time.time()
@@ -82,7 +82,7 @@ def check_remaining_github_requests(github_token, min_num=100, show_state=False)
         for i in progressbar(sleeping_range, "Sleeping : ", 60):
             time.sleep(sleep_step_width)
         requests_remaning, requests_limit = github_user.rate_limiting
-        if show_state:
+        if show_msg:
             print("Remaining request limit {0:5d} / {1:5d}".format(
                                                     requests_remaning,
                                                     requests_limit))
