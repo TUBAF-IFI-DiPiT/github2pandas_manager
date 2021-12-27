@@ -6,6 +6,7 @@ from pathlib import Path
 import datetime
 import pandas as pd
 import time
+import math
 
 from github2pandas_manager import utilities
 from github2pandas.utility import Utility
@@ -541,9 +542,9 @@ class RepositoriesByQuery(RequestHandler):
                 end_date.strftime("%Y-%m-%dT%H:%M:%S") + " " + "stars:" +
                 star_filter)
 
-    def generate_short_time_slot(self, date_interval):
+    def _generate_short_time_slot(self, date_interval):
         """
-        generate_short_time_slot(date_interval)
+        _generate_short_time_slot(date_interval)
 
         Divide the Datetime interval further into small time segments, such as
         one day,half a day, six, three, or one hour, to further narrow the 
@@ -559,9 +560,9 @@ class RepositoriesByQuery(RequestHandler):
         language = self.extract_language()
         star_filter = self.extract_star_filter()
         github_user = utilities.get_github_user(self.github_token)
-        #to hold the small time interval until the suitable time interval is found.
-        # Then, when a suitable time slot is found,
-        # the time slots are appended to the main time list
+        # To hold the short time interval until the suitable time
+        # interval is found. Then, when a suitable time slot is found,
+        # the time slots are appended to the main timeslots list.
         temp_time_slot = []
         periods = [
             2,  # one day interval slots
@@ -572,15 +573,11 @@ class RepositoriesByQuery(RequestHandler):
         ]
 
         for period in periods:
-            print(f"Further dividing interval in {period} intervals.")
             short_time_intervals = pd.interval_range(
                 start=pd.Timestamp(date_interval.left),
                 end=pd.Timestamp(date_interval.right),
                 periods=period)
-            #Notification
-            print(f" Further Interval -> {short_time_intervals}")
             for short_time_interval in short_time_intervals:
-
                 query = self.generate_github_query(language, star_filter,
                                                    short_time_interval.left,
                                                    short_time_interval.right)
@@ -595,18 +592,13 @@ class RepositoriesByQuery(RequestHandler):
                     time.sleep(60)  # Delay for 1 minute (60 seconds).
                 if repositories.totalCount < 1000:
                     temp_time_slot.append(short_time_interval)
-
                 else:
-                    print(
-                        "found more than 1000 repositories, starting temporal segmentation"
-                    )
+                    # Emptying the temporary timeslot list to regenerate
+                    # another suitable shorter time slot.
                     temp_time_slot = []
-
                     break
             if temp_time_slot:
-
-                for time_slot in temp_time_slot:
-                    self.time_slot_list.append(time_slot)
+                self.time_slot_list.extend(temp_time_slot)
                 break
 
     def generate_time_slot_list(self):
@@ -623,48 +615,66 @@ class RepositoriesByQuery(RequestHandler):
         the search period.
 
         """
-        
+
         language = self.extract_language()
         star_filter = self.extract_star_filter()
         start_date, end_date = self.extract_dates()
-        #Increment the end date to the next date to include it in the search
-        #end_date = end_date + datetime.timedelta(days=1)
+        separator_line_count = 55
         if language and star_filter and start_date and end_date:
             github_user = utilities.get_github_user(self.github_token)
             date_interval = pd.interval_range(start=pd.Timestamp(start_date),
-                                              end=pd.Timestamp(end_date),
-                                              periods=1)
+                                            end=pd.Timestamp(end_date),
+                                            periods=1)
 
             query = self.generate_github_query(language, star_filter,
-                                               date_interval[0].left,
-                                               date_interval[0].right)
+                                            date_interval[0].left,
+                                            date_interval[0].right)
+
             repositories = github_user.search_repositories(query=query)
             #Notification
-            print(f" First Interval -> {date_interval}")
+            print("-"*separator_line_count)
+            print(f"Original search period: {date_interval[0]}")
+            print("-"*separator_line_count)
             if repositories.totalCount < 1000:
                 print(
-                    "Repositories are less than 1000 for the original search period!"
+                    "Repositories are less than 1000 for the original search"
+                    "period!"
                 )
                 # add the star and end date as interval to the time slot list
                 self.time_slot_list.append(date_interval[0])
-
+                print("-"*separator_line_count)
             else:
+                # Create intervals of one up to two-day timespan,
+                # depending on the length of the search period.
+                interval_count = math.ceil((end_date - start_date).days / 2)
+                # Notification
+                print("For the original search period, the number of\n"
+                    "repositories is more than 1000. Segmenting of\n"
+                    "Original search period into shorter search time\n"
+                    "slots the is required. Then, this may take between\n"
+                    "seconds and minutes depending on the span of the\n"
+                    "original search period."
 
-                #creating two days interval
-                two_days_slot = (end_date - start_date).days / 2
-                print(f"dividing interval in {two_days_slot} intervals")
-
+                    )
+                print("-"*separator_line_count)
                 date_intervals = pd.interval_range(
                     start=pd.Timestamp(start_date),
                     end=pd.Timestamp(end_date),
-                    periods=two_days_slot)
-                #Notification
-                print(f" Further Interval -> {date_intervals}")
-                for date_interval in date_intervals:
-
+                    periods=interval_count)
+                for index, date_interval in enumerate(date_intervals):
+                    # To adjust the index number with the interval count
+                    index += 1
+                    # Simple progress bar for the interval generating.
+                    sys.stdout.write("Please Wait : %s[%s%s] %i/%s\r" %
+                                (" ", 
+                                "#"*math.ceil((index/interval_count)*100),
+                                "."*math.ceil((1-index/interval_count)*100),
+                                math.ceil((index/interval_count)*100),"100%"))
+                    sys.stdout.flush()
                     query = self.generate_github_query(language, star_filter,
-                                                       date_interval.left,
-                                                       date_interval.right)
+                                                    date_interval.left,
+                                                    date_interval.right)
+
                     repositories = self.github_user.search_repositories(
                         query=query)
 
@@ -676,14 +686,15 @@ class RepositoriesByQuery(RequestHandler):
                         time.sleep(60)  # Delay for 1 minute (60 seconds).
 
                     if repositories.totalCount < 1000:
-
+                        # If the repositories for the interval are still
+                        # more than 1000, then further shorter interval
+                        # segmentation of the interval is requerd.
                         self.time_slot_list.append(date_interval)
-
                     else:
-                        print("Repositories are again more than 1000. "
-                              "Segmenting the two-day interval further.")
-                        # create futher small time slots of the two days interval
-                        self.generate_short_time_slot(date_interval)
+                        self._generate_short_time_slot(date_interval)
+                # Notification 
+            print("\nDone! A list of suitable time slots has been generated.")
+            print("-"*separator_line_count)
         else:
             print("error while reading query parameters!")
             print(("Please check the parameters in the config file!"))
