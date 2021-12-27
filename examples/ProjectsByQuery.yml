@@ -8,27 +8,41 @@ project_folder: ./examples/
 #################################################################
 # Repository selection by search parameters
 
-#Language filter
 language: "C#"
 #Start date in yyyy-mm-dd format
 start_date: 2021-02-01
 #End date in yyyy-mm-dd format
 end_date: 2021-02-04
 #Star filter by (>,<, >= or<=)
-star_filter: ">0"
-
+star_filter: ">100"
 
 
 # #Language filter
 # language: "C#"
 # #Start date in yyyy-mm-dd format
-# start_date: 2020-01-01
+# start_date: 2021-02-01
 # #End date in yyyy-mm-dd format
-# end_date: 2020-01-31
+# end_date: 2021-02-10
 # #Star filter by (>,<, >= or<=)
-# star_filter: ">=0"
+# star_filter: ">0"
+
+
+# #Language filter
+# language: "Python"
+# #Start date in yyyy-mm-dd format
+# start_date: 2010-01-01
+# #End date in yyyy-mm-dd format
+# end_date: 2021-01-01
+# #Star filter by (>,<, >= or<=)
+# star_filter: ">=1000"
+
 
 #################################################################
 # Content 
 content:
 - Repository
+- Issues
+- Version 
+- PullRequests
+- Workflows
+- GitReleases
