@@ -4,6 +4,7 @@ import argparse
 import os
 import sys
 import time
+import math
 
 def check_file_path(file_path_name):
     if os.path.isfile(file_path_name):
@@ -86,3 +87,16 @@ def check_remaining_github_requests(github_token, min_num=100, show_state=False)
                                                     requests_remaning,
                                                     requests_limit))
     return requests_remaning
+
+def check_github_search_limits(github_user, min_limit=10, show_msg=False):
+    search_rate_limit = github_user.get_rate_limit()
+    reset_timestamp = search_rate_limit.search.raw_data["reset"]
+    remaning_rate = search_rate_limit.search.remaining
+    seconds_to_reset = math.ceil(reset_timestamp - time.time())
+    if (seconds_to_reset <= 0) or (remaning_rate < min_limit):
+        if show_msg:
+            print(
+                f"Running low on search rate ... waiting for" 
+                f" {seconds_to_reset} seconds to refresh"
+            )
+        time.sleep(abs(seconds_to_reset))

@@ -581,15 +581,9 @@ class RepositoriesByQuery(RequestHandler):
                 query = self.generate_github_query(language, star_filter,
                                                    short_time_interval.left,
                                                    short_time_interval.right)
-
+                utilities.check_github_search_limits(
+                        github_user, min_limit=1, show_msg=False)
                 repositories = github_user.search_repositories(query=query)
-
-                rate_limits = repositories[0]._requester.rate_limiting
-                if rate_limits[0] < 10:
-                    print(
-                        "Running low on search rate ... waiting for one minute to refresh"
-                    )
-                    time.sleep(60)  # Delay for 1 minute (60 seconds).
                 if repositories.totalCount < 1000:
                     temp_time_slot.append(short_time_interval)
                 else:
@@ -629,7 +623,8 @@ class RepositoriesByQuery(RequestHandler):
             query = self.generate_github_query(language, star_filter,
                                             date_interval[0].left,
                                             date_interval[0].right)
-
+            utilities.check_github_search_limits(
+                        github_user, min_limit=1, show_msg=False)
             repositories = github_user.search_repositories(query=query)
             #Notification
             print("-"*separator_line_count)
@@ -674,17 +669,10 @@ class RepositoriesByQuery(RequestHandler):
                     query = self.generate_github_query(language, star_filter,
                                                     date_interval.left,
                                                     date_interval.right)
-
+                    utilities.check_github_search_limits(
+                        github_user, min_limit=1, show_msg=False)
                     repositories = self.github_user.search_repositories(
                         query=query)
-
-                    rate_limits = repositories[0]._requester.rate_limiting
-                    if rate_limits[0] < 10:
-                        print(
-                            "Running low on search rate ... waiting for one minute to refresh"
-                        )
-                        time.sleep(60)  # Delay for 1 minute (60 seconds).
-
                     if repositories.totalCount < 1000:
                         # If the repositories for the interval are still
                         # more than 1000, then further shorter interval
@@ -722,17 +710,9 @@ class RepositoriesByQuery(RequestHandler):
                 query = self.generate_github_query(language, star_filter,
                                                    date_interval.left,
                                                    date_interval.right)
-
+                utilities.check_github_search_limits(
+                        github_user, min_limit=10, show_msg=True)
                 repositories = github_user.search_repositories(query=query)
-
-                rate_limits = repositories[0]._requester.rate_limiting
-                if rate_limits[0] < 10:
-                    print(
-                        "Running low on search rate ... waiting for one minute to refresh"
-                    )
-                    # Delay for 1 minute (60 seconds).
-                    time.sleep(60)
-
                 self.repository_list += list(repositories)
                 print("From: {} To: {} -> {} Repositories found".format(
                     date_interval.left.strftime("%Y-%m-%d %H:%M"),
