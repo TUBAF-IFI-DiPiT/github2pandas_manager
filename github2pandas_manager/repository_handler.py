@@ -706,18 +706,17 @@ class RepositoriesByQuery(RequestHandler):
 
         generates a list of repositories created in the specified search 
         period based on the search criteria and filters.
-        
+
         """
 
         language = self.extract_language()
         star_filter = self.extract_star_filter()
         start_date, end_date = self.extract_dates()
         time_slot_list = self.time_slot_list
-        #Increment the end date to the next date to include it in the search
-        #end_date = end_date + datetime.timedelta(days=1)
+
         if language and star_filter and start_date and end_date:
             github_user = utilities.get_github_user(self.github_token)
-            #Notification
+            # Notification
             print("Now getting the repositories ....")
             for date_interval in time_slot_list:
                 query = self.generate_github_query(language, star_filter,
@@ -735,14 +734,11 @@ class RepositoriesByQuery(RequestHandler):
                     time.sleep(60)
 
                 self.repository_list += list(repositories)
-
-                print("{} <-> {}- {} Repositories found ({})".format(
+                print("From: {} To: {} -> {} Repositories found".format(
                     date_interval.left.strftime("%Y-%m-%d %H:%M"),
                     date_interval.right.strftime("%Y-%m-%d %H:%M"),
                     len(list(repositories)),
-                    repositories[0]._requester.rate_limiting[0],
                 ))
-
         else:
             print("error while reading query parameters!")
             print(("Please check the parameters in the config file!"))
