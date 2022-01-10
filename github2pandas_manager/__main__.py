@@ -41,6 +41,12 @@ if __name__ == "__main__":
     arguments = parser.parse_args()
     request_params = YAML_RequestDefinition(arguments.config_file)
 
+    if os.getenv("TOKEN") is None:
+        print("Unauthenticated user: To get a higher request and search\n"
+              "rate, be authenticated by getting a token from GitHub.\n"
+              "https://docs.github.com/en/authentication/"+
+              "keeping-your-account-and-data-secure/"+
+              "creating-a-personal-access-token)")
     github_token = os.getenv("TOKEN")
 
     main(request_params=request_params, github_token=github_token)
