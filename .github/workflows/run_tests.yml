@@ -14,7 +14,7 @@ jobs:
       - name: Check out current repository
         uses: actions/checkout@v2
         with:
-          ref: V2
+            ref: V2
   
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
@@ -26,12 +26,9 @@ jobs:
              python -m pip install --upgrade pip
              pip install pipenv
 
-      - name: Install dependencies
-        run: |
-             pipenv install github2pandas_manager
-
       - name: Run generation
         env:
              TOKEN: ${{ secrets.TOKEN }}
         run: |
+             cd github2pandas_manager
              pipenv run python github2pandas_manager/__main__.py -path ./examples/ProjectsByRepoNames.yml
