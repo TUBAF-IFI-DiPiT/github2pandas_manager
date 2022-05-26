@@ -2,66 +2,42 @@ from pathlib import Path
 import time
 import pandas as pd
 import numpy as np
+import logging
 
+from github2pandas.github2pandas import GitHub2Pandas
 from github2pandas.issues import Issues
 from github2pandas.pull_requests import PullRequests
 from github2pandas.version import Version
 from github2pandas.workflows import Workflows
 from github2pandas.repository import Repository
 from github2pandas.git_releases import GitReleases
+from github2pandas.core import Core
 
 from github2pandas_manager import utilities
 
-
 class Github_data_extractor():
 
-    def aggRepository(repo, repo_base_folder, github_token=None):
-        Repository.generate_repository_pandas_table(
-            repo=repo,
-            data_root_dir=repo_base_folder,
-            contributor_companies_included=False
-        )
+    def aggRepository(repo, github2pandas):
+        github2pandas.generate_repository_pandas_tables(repo)
 
-    def aggIssues(repo, repo_base_folder, github_token=None):
-        Issues.generate_issue_pandas_tables(
-            repo=repo,
-            data_root_dir=repo_base_folder,
-        )
+    def aggIssues(repo, github2pandas):
+        github2pandas.generate_issues_pandas_tables(repo) 
 
-    def aggVersion(repo, repo_base_folder, github_token=None):
-        Version.clone_repository(
-            repo=repo,
-            data_root_dir=repo_base_folder,
-            github_token=github_token
-        )
-        Version.no_of_proceses = 4
-        Version.generate_version_pandas_tables(
-            repo=repo,
-            data_root_dir=repo_base_folder
-        )
+    def aggVersion(repo, github2pandas):
+        no_of_proceses = 4
+        github2pandas.generate_version_pandas_tables(repo, 
+                                                     no_of_proceses)
 
-    def aggPullRequests(repo, repo_base_folder, github_token=None):
-        PullRequests.generate_pull_request_pandas_tables(
-            repo=repo,
-            data_root_dir=repo_base_folder
-        )
-        #pass
+    def aggPullRequests(repo, github2pandas):
+        github2pandas.generate_pull_requests_pandas_tables(repo) 
 
-    def aggWorkflows(repo, repo_base_folder, github_token=None):
-        Workflows.generate_workflow_pandas_tables(
-            repo=repo,
-            data_root_dir=repo_base_folder
-        )
-        #pass
+    def aggWorkflows(repo, github2pandas):
+        github2pandas.generate_workflows_pandas_tables(repo) 
 
-    def aggGitReleases(repo, repo_base_folder, github_token=None):
-        GitReleases.generate_git_releases_pandas_tables(
-            repo=repo,
-            data_root_dir=repo_base_folder           
-        )
-        #pass
+    def aggGitReleases(repo, github2pandas):
+        github2pandas.generate_git_releases_pandas_tables(repo)
 
-    def aggUsers(repo, repo_base_folder, github_token=None):
+    def aggUsers(repo, github2pandas):
         # Users are automatically extracted by github2pandas
         pass
 
@@ -82,16 +58,18 @@ class Github_data_extractor():
               output_file_name = AGG_HISTORY_FILE):
 
         # Prepare data frame for providing aggregation history
-        status = pd.DataFrame()
-        repo_content = dict.fromkeys(request_handler.request.parameters.content, np.nan)
+        repo_list = []
         for index, repo in enumerate(request_handler.repository_list):
+            repo_content = dict.fromkeys(request_handler.request.parameters.content, np.nan)
             repo_content['repo_name'] = repo.full_name
-            status = status.append(repo_content, ignore_index=True)
-        status.set_index("repo_name", inplace=True)
+            repo_list.append(repo_content)
+        status = pd.DataFrame(repo_list)
 
+        # all classes of aggregation aims
         for content_element in request_handler.request.parameters.content:
             if content_element in Github_data_extractor.CLASSES:
                 number_of_repos = len(request_handler.repository_list)
+                # all relevant repositories
                 for index, repo in enumerate(request_handler.repository_list):
                     requests_remaning = utilities.check_github_requests_limits(github_token)
                     print("{0:10} - {1:3} / {2:3} - {3} ({4:4d})".format(
@@ -99,18 +77,29 @@ class Github_data_extractor():
                             index, number_of_repos, repo.full_name,
                             requests_remaning)
                          )
+                    git_repo_owner = repo.full_name.split('/')[0]
+                    git_repo_name = repo.full_name.split('/')[1]
+                    base_folder = Path(
+                        request_handler.request.parameters.project_folder,
+                    )
+                    # Provide sub folders for individual organizations
                     repo_base_folder = Path(
                         request_handler.request.parameters.project_folder,
-                        repo.full_name.split('/')[0],
-                        repo.full_name.split('/')[1],
+                        git_repo_owner, git_repo_name,
                     )
                     repo_base_folder.mkdir(parents=True, exist_ok=True)
-                    Github_data_extractor.CLASSES[content_element](repo, repo_base_folder, github_token)
-                    status.loc[repo.full_name, content_element] = pd.Timestamp.now()
+                    # Run extraction
+                    github2pandas = GitHub2Pandas(github_token, 
+                                                  base_folder, 
+                                                  log_level=logging.DEBUG)
+                    repo_ = github2pandas.get_repo(git_repo_owner, git_repo_name)
+                    Github_data_extractor.CLASSES[content_element](repo_, github2pandas)
+                    # Note timestamp 
+                    status.loc[status.repo_name == repo.full_name, content_element] = pd.Timestamp.now()
             else:
                 print(f"{content_element} not known in github2pandas toolchain!")
                 print("Please check spelling")
-                
+        
         output_path = Path(request_handler.request.parameters.project_folder, output_file_name)
         file = open(output_path, 'w+', newline='')
         status.to_csv(file)

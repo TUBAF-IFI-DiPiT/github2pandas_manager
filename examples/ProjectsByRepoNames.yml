@@ -17,4 +17,7 @@ repos_names:
 content:
 - Repository
 - Issues
-#- Versions
+#- Version
+- PullRequests
+- Workflows
+- GitReleases
