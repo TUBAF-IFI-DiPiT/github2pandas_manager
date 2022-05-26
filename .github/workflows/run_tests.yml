@@ -32,6 +32,7 @@ jobs:
         run: |
             cd src
             pipenv install
+            pipenv install -e .
 
       - name: Run generation
         env:
