@@ -20,6 +20,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
             python-version: 3.9
+            cache: 'pipenv'
 
       - name: Install pip
         run: |
@@ -30,5 +31,4 @@ jobs:
         env:
              TOKEN: ${{ secrets.TOKEN }}
         run: |
-             cd github2pandas_manager
              pipenv run python github2pandas_manager/__main__.py -path ./examples/ProjectsByRepoNames.yml
