@@ -79,7 +79,7 @@ class Github_data_merger():
         return df
 
     def get_Users(repo_base_folder, repo_name):
-        df = Utility.get_users(repo_base_folder)
+        df = Core.get_pandas_data_frame(repo_base_folder, Core.UserFiles.USERS)
         df['repo_name'] = repo_name
         return df
 
