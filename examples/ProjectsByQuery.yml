@@ -9,22 +9,22 @@ project_folder: ./examples/
 # Repository selection by search parameters
 
 # # #Language filter
-# language: "C#"
-# #Start date in yyyy-mm-dd format
-# start_date: 2021-02-01
-# #End date in yyyy-mm-dd format
-# end_date: 2021-02-04
-# #Star filter by (>,<, >= or<=)
-# star_filter: ">100"
-
-# #Language filter
 language: "C#"
 #Start date in yyyy-mm-dd format
 start_date: 2021-02-01
 #End date in yyyy-mm-dd format
-end_date: 2021-02-10
+end_date: 2021-02-04
 #Star filter by (>,<, >= or<=)
-star_filter: ">0"
+star_filter: ">100"
+
+# #Language filter
+# language: "C#"
+# #Start date in yyyy-mm-dd format
+# start_date: 2021-02-01
+# #End date in yyyy-mm-dd format
+# end_date: 2021-02-10
+# #Star filter by (>,<, >= or<=)
+# star_filter: ">0"
 
 #################################################################
 # Content 
