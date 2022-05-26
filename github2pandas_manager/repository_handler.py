@@ -5,11 +5,11 @@ import re
 from pathlib import Path
 import datetime
 import pandas as pd
-import time
 import math
+import logging
 
 from github2pandas_manager import utilities
-from github2pandas.utility import Utility
+from github2pandas.github2pandas import GitHub2Pandas
 
 
 class RequestHandler(ABC):
@@ -291,20 +291,17 @@ class RepositoriesByRepoNamePattern(RequestHandler):
         repositories based on the white or black pattern.
 
         """
-        print("###########################################################")
-        print(self.github_token)
-        print(len(self.github_token))
-        print("###########################################################")
         whitelist_patterns = self.request.parameters.repo_white_pattern
         blacklist_patterns = self.request.parameters.repo_black_pattern
-        relevant_repos = Utility.get_repos(
-            token=self.github_token,
-            data_root_dir=self.request.parameters.project_folder,
-            whitelist_patterns=whitelist_patterns,
-            blacklist_patterns=blacklist_patterns,
-        )
+        base_folder = Path(self.request.parameters.project_folder)
+        base_folder.mkdir(parents=True, exist_ok=True)
+        github2pandas = GitHub2Pandas(self.github_token, 
+                                      base_folder, 
+                                      log_level=logging.DEBUG)
+        relevant_repos = github2pandas.get_repos(
+                                      whitelist_patterns=whitelist_patterns,
+                                      blacklist_patterns=blacklist_patterns)
         self.repository_list = relevant_repos
-
 
 class RepositoriesByQuery(RequestHandler):
     """Class to get repositories by the Search query.
