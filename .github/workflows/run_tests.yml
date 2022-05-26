@@ -14,7 +14,6 @@ jobs:
       - name: Check out current repository
         uses: actions/checkout@v2
         with:
-            ref: V2
             path: src
   
       - name: Set up Python 3.9
