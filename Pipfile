@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-github2pandas = "*"
+github2pandas = {ref = "main", git = "https://github.com/TUBAF-IFI-DiPiT/github2pandas.git", editable = true}
 
 [dev-packages]
 github2pandas_manager = {editable = true, path = "."}
