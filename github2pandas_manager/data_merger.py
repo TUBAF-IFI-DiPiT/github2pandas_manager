@@ -28,12 +28,13 @@ class Github_data_merger():
                 repo_df = merge_fct(repo_base_folder, repo.name)
                 df = pd.concat([df, repo_df], axis=0)
                     
+            # replace new lines in commit messages
+            df = df.replace(r'\n',' ', regex=True) 
+            df.reset_index(inplace=True, drop=True)
             file_name = merge_fct.__name__.split('_')[1]
             csv_output_path = Path(project_base_folder, 
                                    file_name + '.csv')
             print("    " + str(csv_output_path))
-            # replace new lines in commit messages
-            df = df.replace(r'\n',' ', regex=True) 
             df.to_csv(csv_output_path, index=False)
             output_path = Path(project_base_folder, file_name + '.p')
             with open(output_path, "wb") as f:
@@ -69,12 +70,14 @@ class Github_data_merger():
         return df
 
     def get_Commits(repo_base_folder, repo_name):
-        df = Version.get_version(repo_base_folder, filename=Version.VERSION_COMMITS)
+        data_dir = Path(repo_base_folder, Version.Files.DATA_DIR)
+        df = Core.get_pandas_data_frame(data_dir, Version.Files.COMMITS)
         df['repo_name'] = repo_name
         return df
 
     def get_Edits(repo_base_folder, repo_name):
-        df = Version.get_version(repo_base_folder, filename=Version.VERSION_EDITS)
+        data_dir = Path(repo_base_folder, Version.Files.DATA_DIR)
+        df = Core.get_pandas_data_frame(data_dir, Version.Files.EDITS)
         df['repo_name'] = repo_name
         return df
 
