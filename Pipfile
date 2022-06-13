@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 github2pandas = {ref = "main", git = "https://github.com/TUBAF-IFI-DiPiT/github2pandas.git", editable = true}
+pyyaml = "*"
 
 [dev-packages]
 github2pandas_manager = {editable = true, path = "."}
